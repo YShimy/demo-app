@@ -61,7 +61,8 @@ jobs:
         with:
           context: .
           push: true
-          # tag with the short commit SHA — never rely on :latest for deploys
+          provenance: false
+# tag with the short commit SHA — never rely on :latest for deploys
           tags: |
             ${{ env.IMAGE }}:${{ github.sha }}
             ${{ env.IMAGE }}:latest
