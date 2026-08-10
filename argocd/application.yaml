@@ -1,0 +1,32 @@
+# The GitOps definition. Apply this once with:  kubectl apply -f argocd/application.yaml
+#
+# It tells ArgoCD: "watch the k8s/ folder of this PRIVATE repo, and keep the
+# 'demo' namespace in the cluster matching it." Every commit the pipeline makes
+# to k8s/deployment.yaml is picked up and synced automatically.
+#
+# Because the repo is PRIVATE, you must first register credentials with ArgoCD
+# (see docs/INTERN_GUIDE.md, Project 3, step 2).
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-app
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/YOUR_ORG/demo-app.git   # <-- your private repo
+    targetRevision: main
+    path: k8s
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+
+  syncPolicy:
+    automated:
+      prune: true        # delete resources removed from Git
+      selfHeal: true     # revert manual kubectl changes back to what Git says
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,75 @@
+# Builds the app, pushes the image to Harbor, then updates the Kubernetes
+# manifest with the new tag. ArgoCD watches that manifest and deploys the change.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   HARBOR_REGISTRY   e.g. harbor.local  or  demo.harbor.io
+#   HARBOR_PROJECT    e.g. intern-demo
+#   HARBOR_USERNAME   a Harbor robot account name
+#   HARBOR_PASSWORD   the robot account token
+
+name: CI-CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  IMAGE: ${{ secrets.HARBOR_REGISTRY }}/${{ secrets.HARBOR_PROJECT }}/demo-app
+
+jobs:
+  # --- runs on every push and every PR ---
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - run: npm test
+
+  # --- build + push only when code lands on main or develop, never on a PR ---
+  build-and-push:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to push the manifest bump back to the repo
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.HARBOR_REGISTRY }}
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          # tag with the short commit SHA — never rely on :latest for deploys
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # GitOps step: rewrite the image tag in the manifest and commit it.
+      # ArgoCD sees the commit and syncs the new version to minikube.
+      - name: Update manifest with new image tag
+        run: |
+          sed -i "s|image: .*/demo-app:.*|image: ${IMAGE}:${GITHUB_SHA}|" k8s/deployment.yaml
+          git config user.name  "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git add k8s/deployment.yaml
+          git commit -m "ci: deploy demo-app:${GITHUB_SHA}" || echo "no change"
+          git push
