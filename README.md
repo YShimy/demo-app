@@ -49,3 +49,4 @@ docs/INTERN_GUIDE.md  the exercise, start here
 
 Push to GitHub → Actions builds & tests → image pushed to **Harbor** → manifest bumped →
 **ArgoCD** deploys it to **minikube**.
+
