@@ -35,7 +35,7 @@ jobs:
   build-and-push:
     needs: test
     if: github.event_name == 'push'
-    runs-on: self-hosted
+    runs-on: arc-demo-app
     permissions:
       contents: write   # needed to push the manifest bump back to the repo
     steps:
