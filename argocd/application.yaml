@@ -16,7 +16,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/YOUR_ORG/demo-app.git   # <-- your private repo
+    repoURL: https://github.com/YShimy/demo-app.git   # <-- your private repo
     targetRevision: main
     path: k8s
 
