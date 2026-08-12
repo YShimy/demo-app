@@ -83,7 +83,7 @@ jobs:
         id: manifest_pr
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.BOT_PAT }}
           commit-message: "ci: deploy demo-app:${{ github.sha }}"
           branch: ci/deploy-${{ github.sha }}
           title: "ci: deploy demo-app:${{ github.sha }}"
@@ -102,10 +102,23 @@ jobs:
               repo: context.repo.repo,
               pull_number: prNumber
             });
-            await github.graphql(`
-              mutation($pullRequestId: ID!) {
-                enablePullRequestAutoMerge(input: {pullRequestId: $pullRequestId, mergeMethod: SQUASH}) {
-                  clientMutationId
+            try {
+              await github.graphql(`
+                mutation($pullRequestId: ID!) {
+                  enablePullRequestAutoMerge(input: {pullRequestId: $pullRequestId, mergeMethod: SQUASH}) {
+                    clientMutationId
+                  }
                 }
+              `, { pullRequestId: pr.data.node_id });
+            } catch (error) {
+              if (error.message.includes('clean status')) {
+                await github.rest.pulls.merge({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  merge_method: 'squash'
+                });
+              } else {
+                throw error;
               }
-            `, { pullRequestId: pr.data.node_id });
+            }
