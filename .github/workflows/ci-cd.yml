@@ -111,7 +111,7 @@ jobs:
                 }
               `, { pullRequestId: pr.data.node_id });
             } catch (error) {
-              if (error.message.includes('clean status')) {
+              if (error.message.includes('clean status') || error.message.includes('unstable status')) {
                 await github.rest.pulls.merge({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
