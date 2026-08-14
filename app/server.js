@@ -32,9 +32,10 @@ app.get("/", (req, res) => {
 app.get("/healthz", (req, res) => res.status(200).json({ status: "alive" }));
 
 // Readiness: is it ready to receive traffic yet?
-app.get('/readyz', (req, res) => {
-  res.status(500).json({ status: 'broken' });
-});
+app.get("/readyz", (req, res) =>
+  ready ? res.status(200).json({ status: "ready" })
+        : res.status(503).json({ status: "starting" })
+);
 
 // A simple JSON endpoint for pipeline smoke tests.
 app.get("/api/version", (req, res) => res.json({ version: VERSION }));
