@@ -70,8 +70,7 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:${{ github.sha }}
             ${{ env.IMAGE }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          
 
       # GitOps step: rewrite the image tag in the manifest and commit it.
       # ArgoCD sees the commit and syncs the new version to minikube.
