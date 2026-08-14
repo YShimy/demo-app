@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate-check
+  namespace: demo
+spec:
+  args:
+    - name: canary-hash
+  metrics:
+    - name: restart-count
+      interval: 15s
+      count: 4
+      successCondition: result[0] < 1
+      failureLimit: 2
+      provider:
+        prometheus:
+          address: http://172.23.152.145:9090
+          query: |
+            increase(kube_pod_container_status_restarts_total{namespace="demo", pod=~"demo-app-{{args.canary-hash}}.*"}[1m])
