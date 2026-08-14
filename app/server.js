@@ -29,7 +29,14 @@ app.get("/", (req, res) => {
 });
 
 // Liveness: is the process alive at all?
-app.get("/healthz", (req, res) => res.status(200).json({ status: "alive" }));
+const startTime = Date.now();
+app.get("/healthz", (req, res) => {
+  const uptime = Date.now() - startTime;
+  if (uptime > 20000) {
+    return res.status(500).json({ status: "degraded" });
+  }
+  res.status(200).json({ status: "alive" });
+});
 
 // Readiness: is it ready to receive traffic yet?
 app.get("/readyz", (req, res) =>
