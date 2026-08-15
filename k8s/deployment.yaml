@@ -36,7 +36,7 @@ spec:
       containers:
         - name: demo-app
           # This line is rewritten by the CI pipeline on every deploy.
-          image: harbor.harbor.svc.cluster.local:80/intern-demo/demo-app:f5e65b5c1eec701273b633e75eaf129273b1d625
+          image: harbor.harbor.svc.cluster.local:80/intern-demo/demo-app:b4d4d11045acd9143af9dedfd0ba2c0026b5bbad
           ports:
             - containerPort: 3000
           env:
