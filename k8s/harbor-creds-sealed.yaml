@@ -1,0 +1,16 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: harbor-creds
+  namespace: demo
+spec:
+  encryptedData:
+    .dockerconfigjson: AgCVyE1u6k8r7aDSn91Na54S+M95wVkflR4Wdf28RLtO+6Int4hYLhat9J+09ZSNCo6zZ03Hc46lkgjyfgLxgpYSXUTwNUvTCWMpaYW2znbH9iBlM7mr60EQB2aub80NwAic42zu3GMSYjcYeJy6OB607DxVak9SSjePzOC/YMjE/oGlCZsNmw7JH6bTGtFywjUPfwc/OdqKrTROIDMCU1MNKA5wWYtKZlxgaBc07AookKKDCrv9f5FpqztvsYcJ0dH+Z8ofvmVNNmp/C10SvTEO4+4YdBB+zjgIKkDSh49F3KavdGTukvc8xPd2cy6KfTW1WYBvTu0Nr3fYalcLPS5txWMRcfeFu8QVR3HPsPyyLGeR0pCfBVZdANsl6wGsTWPHW0c0SdRRBEXAD98P417jX/tBB0rk1pxAKL/1nlF8GSy52etwOdYa+uF/if1P1RTz7n67IrkHY7SBMLtxjv4KfAhZLkvArpTO07+sDbzkFkG7t19F7Dj/GLMxde3D+LG8E7qxfBoHj1BIZs6k8TXJJhI5E3ioRE2EWiZ4iNLksdwkjvx0EJAo9y//o/hQM9mmlrRRkNUDqAH4kKxgkLpHEb/PbA4YJlBQZSiIAgAIqAiBBYo0LZjAWyogpZWGkNYZLFhFRWZeWjEE0+a8EmCxfKxF8zNcWzHEorjQaYhTZoSR6i9sIf455GgJOTzrFQP4CPpjOQQZelH1WMmYhCni76dWCX1FoomGdJtjciu90jLARDifH5DeS2Pj3IM3I8oBdbCG/iZct2gzYt15/AnhQfrB6iTpPQubYRhl0kozZ/iQjmVnoSeAN4bukq7CGnaERc+dGvRuB24EsiPYHPVe76AB5uSCpyxB1UQAc3Zf4IkyecIPvEnw1cnJOmRF//r5ZRha6t+jcraoXheQRL/6rkrTTMvV9WhgvWjWH+i0BT+fzXlt+QJhW7qfUxCPbOcLRxCrBFPI/P/rdXoKg952mfSSyw==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: harbor-creds
+      namespace: demo
+    type: kubernetes.io/dockerconfigjson
